@@ -1,0 +1,3 @@
+
+class ManagePlayers:
+    pass
