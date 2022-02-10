@@ -54,7 +54,6 @@ class Player:
         sorted_player_by_alpha = sorted(players_list, key=lambda row: row['last_name'])
         return sorted_player_by_alpha
 
-
     def load_players_from_db(self, players_ids):
         """
 
@@ -74,5 +73,3 @@ class Player:
         players_list = players_info_table.search(Query().name == tournament_name)
         print(players_list)
         return players_list[0]['tournament_players_ranking']
-
-

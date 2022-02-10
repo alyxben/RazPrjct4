@@ -46,26 +46,23 @@ class Round:
         middle = len(self.players) // 2
         groups = self.players[:middle], self.players[middle:]
         i = 0
-        n = 0
-        test_if_already_paired = iter(self.players)
-        while i < middle:
+        n = 1
+        test_if_already_paired = iter(groups[1])
+        while n < middle:
             var = next(test_if_already_paired)
             test = self._check_if_pairable(groups[0][i], var)
             if test is False:
                 print(f"{test} LA PAIRE A ETE FAITE")
                 self.match = Match(self.round_id, player1=groups[0][i], player2=var)
                 self.pairs.append(self.match)
-                i += 1
+                groups[0].pop(i)
                 if len(self.pairs) == middle:
-                    return print(self.pairs)
+                    return self
                 else:
+                    n += 1
                     continue
             else:
                 print(f"{test} LA PAIRE N'A PAS ETE FAITE")
-
-
-
-
 
     def _check_if_pairable(self, player1, player2):
         if player1.id == player2.id or player2.id in player1.opponent:

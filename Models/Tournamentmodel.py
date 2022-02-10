@@ -7,11 +7,14 @@ from operator import attrgetter
 
 
 class Tournament:
-    def __init__(self, tournament_info=None):
+    def __init__(self, tournament_info):
         self.name = tournament_info['tournament_name']
         self.location = tournament_info['location']
         self.description = tournament_info['description']
-        self.nb_of_rounds = int(tournament_info['rounds'])
+        if tournament_info['nb_of_round'] == '':
+            self.nb_of_rounds = 4
+        else:
+            self.nb_of_rounds = tournament_info['nb_of_round']
         self.time_set = tournament_info['time_set']
         self.tournament_players_ranking: list = tournament_info['tournament_players']
         self.tournament_id = tournament_info['tournament_id']
@@ -39,7 +42,7 @@ class Tournament:
                 'description': self.description,
                 'tournament_players': self.tournament_players_ranking,
                 'begin_date': self.begin_date,
-                'rounds': self.nb_of_rounds,
+                'nb_of_round': self.nb_of_rounds,
                 'actual_round': self.actual_round,
                 'time_set': self.time_set,
                 'tournament_id': self.tournament_id,
@@ -95,5 +98,6 @@ class Tournament:
                     player.opponent.append(match.player1.id)
                 elif player.id == match.player1.id:
                     player.opponent.append(match.player2.id)
+        self.round_list.append(match)
         self.actual_round += 1
-        return self
+        return
