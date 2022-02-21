@@ -30,7 +30,7 @@ class HomeMenuController:
         self.view = HomeMenuView(self.menu)
 
     def __call__(self):
-        self.menu.add('auto', 'Créer un nouveau tournoi', CreateNewTournamentController())
+        self.menu.add('auto', 'Créer un nouveau tournoi', CreateNewTournamentController)
         self.menu.add('auto', 'Continuer un tournoi', LiveTournamentController())
         #self.menu.add('auto', 'Générer un rapport de tournoi', CreateTournamentInfoFile())
         #self.menu.add('auto', 'Générer un rapport de joueur', ManagePlayers())

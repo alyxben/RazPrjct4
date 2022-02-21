@@ -22,7 +22,7 @@ class Player:
                f"ID: {self.id}\n" \
                f"Opponent: {self.opponent}\n"
 
-    def _serialize_player_info(self):
+    def serialize_player_info(self):
         """
         Serialize the player info so it can be stored in db
         :return: Serialized player info
@@ -40,7 +40,7 @@ class Player:
     def save_player_in_db(self):
         db = TinyDB('db.json')
         player_info_table = db.table('Players')
-        player_info_table.insert(self._serialize_player_info())
+        player_info_table.insert(self.serialize_player_info())
 
     def sort_players_by_rank(self, players_list):
         sorted_player_by_rank = sorted(players_list, key=lambda row: row['rank'])

@@ -1,71 +1,71 @@
 from datetime import datetime
-from Models.Tournamentmodel import *
 from Models.Playermodel import *
 from Models.Matchmodel import Match
+from operator import attrgetter
 
 
 class Round:
-    def __init__(self, tournament):
-        self.tournament = tournament
-        self.players = self.tournament.tournament_players_ranking
-        self.round_id = int(self.tournament.actual_round)
+    def __init__(self, round_id, players_list):
+        self.players = players_list
+        self.round_id = round_id
         self.match = ""
-        self.start_time = ""
+        self.start_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.end_time = ""
         self.pairs = []
 
     def __repr__(self):
-        return f"Nom du tournoi: {self.tournament.name}\n" \
-               f"Round: {self.round_id}\n" \
+        return f"Round: {self.round_id}\n" \
                f"A débuté le: {self.start_time}\n" \
                f"Les duels pour ce round sont: {self.pairs}\n"
 
     def generate_1st_round_pairs(self):
         """
-        Generates the 1st round pairs, and saves actual date and time
-        :param players_list: list of players sorted by rank
+        Generates the 1st round pairs
         :return: list of pairs for the 1st round
         """
-        self.round_id += 1
         i = 0
         middle = len(self.players) // 2
         groups = self.players[:middle], self.players[middle:]
+        match_list = []
         while i < middle:
             self.match = Match(self.round_id, player1=groups[0][i], player2=groups[1][i])
-            self.pairs.append(self.match)
+            match_list.append(self.match)
             i += 1
-        return self
+        return match_list
 
     def generate_next_round_pairs(self):
         """
-
-        :param
-        :return:
+        Associez le joueur 1 avec le joueur 2, le joueur 3 avec le joueur 4, et ainsi de suite.
+        Si le joueur 1 a déjà joué contre le joueur 2, associez-le plutôt au joueur 3.
         """
-        self.round_id += 1
-        middle = len(self.players) // 2
-        groups = self.players[:middle], self.players[middle:]
-        i = 0
-        n = 1
-        test_if_already_paired = iter(groups[1])
-        while n < middle:
-            var = next(test_if_already_paired)
-            test = self._check_if_pairable(groups[0][i], var)
-            if test is False:
-                print(f"{test} LA PAIRE A ETE FAITE")
-                self.match = Match(self.round_id, player1=groups[0][i], player2=var)
-                self.pairs.append(self.match)
-                groups[0].pop(i)
-                if len(self.pairs) == middle:
-                    return self
-                else:
-                    n += 1
-                    continue
-            else:
-                print(f"{test} LA PAIRE N'A PAS ETE FAITE")
+        groups = self.players[::2], self.players[1::2]
+        matches = list(zip(groups[0], groups[1]))
+        match_list = []
+        availables = sorted(self.players, key=attrgetter('elo'))
 
-    def _check_if_pairable(self, player1, player2):
-        if player1.id == player2.id or player2.id in player1.opponent:
-            return True
-        else:
-            return False
+        for item in range(len(matches)):
+            (player_1, player_2) = matches[item]
+            availables.remove(player_1)
+
+            if player_2 in player_1.opponent:
+                possibles = [p for p in availables if p not in player_1.opponent]
+
+                if not possibles:
+                    availables.remove(player_2)
+                else:
+                    figther = next(iter(sorted(possibles)))
+                    matches[item] = (player_1, figther)
+                    availables.remove(figther)
+                    groups2 = availables[::2], availables[1::2]
+                    matches2 = list(zip(groups2[0], groups2[1]))
+                    matches[item + 1:] = matches2
+
+        for i in matches:
+            match_list.append(Match(round_id=self.round_id, player1=i[0], player2=i[1]))
+        return match_list
+
+    def go_to_next_round(self):
+        self.round_id += 1
+        self.pairs = self.generate_next_round_pairs()
+        self.start_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        return self
