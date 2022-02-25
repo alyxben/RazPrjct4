@@ -71,5 +71,4 @@ class Tournament:
                     player.opponent.append(match.player1.id)
                 elif player.id == match.player1.id:
                     player.opponent.append(match.player2.id)
-        self.actual_round += 1
         return self

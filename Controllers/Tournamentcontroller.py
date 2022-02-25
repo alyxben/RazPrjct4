@@ -53,15 +53,16 @@ class LiveTournamentController:
             self.tournament.add_elo_to_players_from_match(match)
         self.round.end_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.tournament.round_list.append(self.round)
-        while self.tournament.actual_round <= self.tournament.nb_of_rounds:
+        while len(self.tournament.round_list) <= self.tournament.nb_of_rounds:
+            self.tournament.actual_round += 1
+            self.round = Round(self.tournament.actual_round, self.tournament.tournament_players_ranking)
             self.round.go_to_next_round()
-            print(f"CNTROLLEUR {self.round.pairs}")
             for match in self.round.pairs:
                 match = match.get_result(self.tournament_view.get_match_result(match))
                 self.tournament.add_elo_to_players_from_match(match)
             self.round.end_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
             self.tournament.round_list.append(self.round)
-            return
+        return
 
 
 class CreateNewTournamentController:
