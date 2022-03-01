@@ -1,14 +1,9 @@
-from tinydb import TinyDB
-from Models.Playermodel import *
-from Models.Tournamentmodel import *
-
-
 
 class Match:
     def __init__(self, round_id, player1, player2):
         self.round_id = round_id
-        self.player1: Player = player1
-        self.player2: Player = player2
+        self.player1 = player1
+        self.player2 = player2
         self.score = False
 
     def __repr__(self):
@@ -25,17 +20,9 @@ class Match:
                 f"Resultat : {result}\n")
 
     def serialize_match_result(self):
-        return {'round_id': self.round_id,
-                'player1': self.player1,
-                'score_player1': self.score_player1,
-                'player2': self.player2,
-                'score_player2': self.score_player2}
-
-    def save_match(self):
-        db = TinyDB('db.json')
-        match_info_table = db.table('Matchs')
-        match_info_table.insert(self.serialize_match_result())
-        return
+        return {'player1': self.player1.last_name,
+                'player2': self.player2.last_name,
+                'Result': self.score}
 
     def get_result(self, result):
         self.score = result

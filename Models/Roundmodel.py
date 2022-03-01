@@ -18,6 +18,21 @@ class Round:
                f"A débuté le: {self.start_time}\n" \
                f"Les duels pour ce round sont: {self.pairs}\n"
 
+    def serialize_round_info(self):
+        return {'round_id': self.round_id,
+                'pairs': self.serialize_matchs_round(),
+                'start_time': self.start_time,
+                'end_time': self.end_time}
+
+    def serialize_matchs_round(self):
+        serialized_match = []
+        for match in self.pairs:
+            if isinstance(match, Match):
+                serialized_match.append(match.serialize_match_result())
+            else:
+                serialized_match = self.pairs
+        return serialized_match
+
     def generate_1st_round_pairs(self):
         """
         Generates the 1st round pairs
@@ -47,15 +62,15 @@ class Round:
             (player_1, player_2) = matches[item]
             availables.remove(player_1)
 
-            if player_2 in player_1.opponent:
-                possibles = [p for p in availables if p not in player_1.opponent]
+            if player_2.id in player_1.opponent:
+                possibles = [p for p in availables if p.id not in player_1.opponent]
 
                 if not possibles:
                     availables.remove(player_2)
                 else:
-                    figther = next(iter(sorted(possibles)))
-                    matches[item] = (player_1, figther)
-                    availables.remove(figther)
+                    fighter = next(iter(possibles))
+                    matches[item] = (player_1, fighter)
+                    availables.remove(fighter)
                     groups2 = availables[::2], availables[1::2]
                     matches2 = list(zip(groups2[0], groups2[1]))
                     matches[item + 1:] = matches2
