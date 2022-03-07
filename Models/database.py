@@ -87,7 +87,7 @@ class Database:
         :return: list of Tournament objects
         """
         tournaments_list_deserialized = []
-        closed_tournaments = self.tournaments_table.search(self.query.end_date == str)
+        closed_tournaments = self.tournaments_table.search(self.query.end_date != False)
         for t in closed_tournaments:
             tournaments_list_deserialized.append(self.deserialize_tournament_info(t))
         return tournaments_list_deserialized

@@ -47,18 +47,24 @@ class TournamentRapport:
         elif user_choices[1] == 'R':
             self.get_tournament_rounds(user_choices[0])
         elif user_choices[1] == 'M':
-            self.get_tournament_rounds(user_choices[0])
+            self.get_tournament_matchs(user_choices[0])
 
 
     def get_tournament_players(self, tournament):
-        players = tournament.tournament_players_id
-        self.view.display_players_list(players)
+        players_id = tournament.tournament_players_id
+        players_list = []
+        for id in players_id:
+            players_list.append(self.database.load_player_from_id(id))
+        self.view.display_players_list(players_list)
 
     def get_tournament_rounds(self, tournament):
-        print(tournament.round_list)
+        self.view.display_round_list(tournament.round_list)
+
 
     def get_tournament_matchs(self, tournament):
-        matchs = []
+        match_list = []
         for r in tournament.round_list:
-            for m in r:
-                matchs.append(m)
+            matchs = r['match_list']
+            for m in matchs:
+                match_list.append(m)
+        self.view.display_matchs(match_list)

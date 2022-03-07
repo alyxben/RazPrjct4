@@ -82,9 +82,9 @@ class TournamentView:
     @staticmethod
     def get_match_result(match):
         possible_input = ['0', '0.5', '1']
-        print(match[0], 'VS', match[1])
         p1 = match[0][0].last_name
         p2 = match[1][0].last_name
+        print(p1, 'VS', p2)
         while True:
             try:
                 score_p1 = input(f"Veuillez entrer le résultat du joueur {p1}")

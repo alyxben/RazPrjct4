@@ -16,7 +16,7 @@ class RapportView:
             elif user_choice == possible_answers[0]:
                 print(sorted(players_list, key=attrgetter('last_name')))
             elif user_choice == possible_answers[1]:
-                print(sorted(players_list, key=attrgetter('elo'), reverse=True))
+                print(sorted(players_list, key=attrgetter('tournament_points'), reverse=True))
 
     def get_user_tournament_choice_from_list(self, tournaments_list):
         live_tournament_names = []
@@ -43,8 +43,12 @@ class RapportView:
                 return tournament, second_input
 
     def display_round_list(self, round_list):
-        print(round_list)
+        n = 1
+        for r in round_list:
+            print(f"Round: {n}", r)
+            n += 1
 
     def display_matchs(self, match_list):
         for m in match_list:
             print(m)
+        print(len(match_list))

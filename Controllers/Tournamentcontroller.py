@@ -90,6 +90,7 @@ class LiveTournamentController:
             self.tournament.round_list.append(self.round.serialize_round_info())
             self.database.save_tournament_in_db(self.tournament.serialize_tournament_info(),
                                                 self.tournament.tournament_id)
+        self.tournament.end_date = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.database.save_tournament_in_db(self.tournament.serialize_tournament_info(), self.tournament.tournament_id)
         print(sorted(self.players, key=attrgetter('tournament_points'), reverse=True))
         return
