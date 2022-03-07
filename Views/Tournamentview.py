@@ -1,6 +1,6 @@
 from uuid import uuid4
 from typing import Dict
-from Models.Matchmodel import Match
+from Models.Tournamentmodel import Tournament
 
 
 class TournamentView:
@@ -15,7 +15,7 @@ class TournamentView:
         """
 
         tournament_info: Dict[str, str] = {
-            'tournament_name': input("Veuillez entrer le nom du tournoi: ").strip().capitalize(),
+            'name': input("Veuillez entrer le nom du tournoi: ").strip().capitalize(),
             'location': input("Veuillez entrer le lieu du tournoi: ").strip().capitalize(),
             'description': input(
                 "Veuillez entrer une description pour ce tournoi: ").strip().capitalize()}
@@ -38,15 +38,19 @@ class TournamentView:
                     f"Veuillez entrer un nombre entier positif :{tournament_info['nb_of_round']} n'est pas un chiffre entier positif")
             else:
                 break
-        tournament_info['tournament_players_ranking'] = []
+        tournament_info['tournament_players_id'] = []
         tournament_info['tournament_id'] = str(uuid4())
+        tournament_info['actual_round'] = 0
+        tournament_info['round_list'] = []
+        tournament_info['begin_date'] = ""
+        tournament_info['end_date'] = False
         return tournament_info
 
     @staticmethod
-    def continue_tournament(tournament_name):
+    def continue_tournament(tournament):
         possible_answers = ['Oui', 'Non']
         while True:
-            user_input = input(f"Commencer ou reprendre le tournoi {tournament_name}"
+            user_input = input(f"Commencer ou reprendre le tournoi {tournament.name}"
                                f"?(Oui ou Non)").strip().capitalize()
             if user_input not in possible_answers:
                 print("Je n'ai pas compris votre réponse, veuillez choisir oui ou non")
@@ -58,15 +62,12 @@ class TournamentView:
             return False
 
     @staticmethod
-    def get_user_touurnament_choice_from_list(tournaments_list):
+    def get_user_tournament_choice_from_list(tournaments_list):
         live_tournament_names = []
-        list_of_tournament_ids = []
         print("Liste des tournois en cours: ")
-        user_choice = {}
         for i in tournaments_list:
             print(i)
-            live_tournament_names.append(i['tournament_name'])
-            list_of_tournament_ids.append(i['tournament_id'])
+            live_tournament_names.append(i.name)
         while True:
             user_input = input(f"Veuillez entrer le nom du tournoi que vous souhaitez continuer, 0 pour revenir au "
                                f"menu principal: \n").strip().capitalize()
@@ -76,17 +77,27 @@ class TournamentView:
                 print(f"{user_input} n'est pas dans la liste des tournois en cours")
 
             else:
-                return next(i for i in tournaments_list if i['tournament_name'] == user_input)
+                return next(i.tournament_id for i in tournaments_list if i.name == user_input)
 
     @staticmethod
     def get_match_result(match):
-        possible_input = [match.player1.last_name, match.player2.last_name, 'Nulle']
+        possible_input = ['0', '0.5', '1']
+        print(match[0], 'VS', match[1])
+        p1 = match[0][0].last_name
+        p2 = match[1][0].last_name
         while True:
-            print(match)
-            match_result = input(
-                f"Veuillez entrer le nom du vainqueur, ou nulle pour une partie nulle: ").strip().capitalize()
-            if match_result not in possible_input:
-                print("Je n'ai pas compris votre réponse")
-            else:
-                break
-        return match_result
+            try:
+                score_p1 = input(f"Veuillez entrer le résultat du joueur {p1}")
+                score_p2 = input(f"Veuillez entrer le résultat du joueur {p2}")
+                if score_p1 and score_p2 not in possible_input:
+                    print("Je n'ai pas compris votre réponse, veuillez entrer 1 si le joueur a gagné, 0 si il a perdu et"
+                            " 0.5 pour un match nul ")
+                    continue
+                else:
+                    break
+            except ValueError:
+                print("Je n'ai pas compris ")
+                continue
+        match[0].append(float(score_p1))
+        match[1].append(float(score_p2))
+        return match

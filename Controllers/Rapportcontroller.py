@@ -1,6 +1,9 @@
 from Models.Menumodel import MenuModel
 from Views.Menuview import HomeMenuView
 from Models.database import Database
+from Views.Rapportview import RapportView
+from Models.Playermodel import Player
+from Models.Tournamentmodel import Tournament
 
 
 class RapportSubMenu:
@@ -8,13 +11,54 @@ class RapportSubMenu:
         self.menu = MenuModel()
         self.menu_view = HomeMenuView(self.menu)
         self.database = Database()
+        self.rapport_view = RapportView()
 
     def __call__(self):
-        self.menu.add('auto', 'Liste des joueurs', self.database.load_all_players())
-        self.menu.add('auto', 'Liste des tournois clôturés', self.database.load_tournament_from_db())
+        self.menu.add('auto', 'Liste des joueurs', PlayerRapport())
+        self.menu.add('auto', 'Liste des tournois clôturés', TournamentRapport())
+        #self.menu.add('auto', "Liste des joueurs d'un tournoi", ) display closed tournament, let user select wich tournament
+        #self.menu.add('auto', "Liste des tours d'un tournoi") display closed tournament, let user select wich tournament
+        #self.menu.add('auto', "Liste des matchs d'un tournoi") display closed tournament, let user select wich tournament
         user_choice = self.menu_view.get_user_choice()
-        return user_choice
+        return user_choice.handler
 
 
-    #def player_rapports(self):
+class PlayerRapport:
+    def __init__(self):
+        self.database = Database()
+        self.view = RapportView()
+        self.players = []
 
+    def __call__(self):
+        self.players = self.database.load_all_players()
+        self.view.display_players_list(self.players)
+
+
+class TournamentRapport:
+    def __init__(self):
+        self.database = Database()
+        self.view = RapportView()
+        self.tournaments = self.database.load_closed_tournaments()
+
+    def __call__(self):
+        user_choices = self.view.get_user_tournament_choice_from_list(self.tournaments)
+        if user_choices[1] == 'J':
+            self.get_tournament_players(user_choices[0])
+        elif user_choices[1] == 'R':
+            self.get_tournament_rounds(user_choices[0])
+        elif user_choices[1] == 'M':
+            self.get_tournament_rounds(user_choices[0])
+
+
+    def get_tournament_players(self, tournament):
+        players = tournament.tournament_players_id
+        self.view.display_players_list(players)
+
+    def get_tournament_rounds(self, tournament):
+        print(tournament.round_list)
+
+    def get_tournament_matchs(self, tournament):
+        matchs = []
+        for r in tournament.round_list:
+            for m in r:
+                matchs.append(m)
