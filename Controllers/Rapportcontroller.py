@@ -49,7 +49,6 @@ class TournamentRapport:
         elif user_choices[1] == 'M':
             self.get_tournament_matchs(user_choices[0])
 
-
     def get_tournament_players(self, tournament):
         players_id = tournament.tournament_players_id
         players_list = []
@@ -59,7 +58,6 @@ class TournamentRapport:
 
     def get_tournament_rounds(self, tournament):
         self.view.display_round_list(tournament.round_list)
-
 
     def get_tournament_matchs(self, tournament):
         match_list = []

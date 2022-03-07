@@ -71,7 +71,7 @@ class LiveTournamentController:
             match_list = round_info[0]
             round_start_time = round_info[1]
             self.round = Round(match_list, round_start_time)
-            print(self.round)
+            print(sorted(self.players, key=attrgetter('tournament_points'), reverse=True))
             for match in self.round.match_list:
                 match = self.tournament_view.get_match_result(match)
                 p_1 = match[0][0]

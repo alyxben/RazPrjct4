@@ -88,9 +88,10 @@ class Tournament:
         Associez le joueur 1 avec le joueur 2, le joueur 3 avec le joueur 4, et ainsi de suite.
         Si le joueur 1 a déjà joué contre le joueur 2, associez-le plutôt au joueur 3.
         """
+        tournament_players.sort(key=attrgetter('tournament_points'), reverse=True)
         groups = tournament_players[::2], tournament_players[1::2]
         matchs = list(zip(groups[0], groups[1]))
-        availables = sorted(tournament_players, key=attrgetter('tournament_points'))
+        availables = sorted(tournament_players, key=attrgetter('tournament_points'), reverse=True)
         match_list = []
         round_start_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.actual_round += 1
