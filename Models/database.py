@@ -103,15 +103,29 @@ class Database:
         return player
 
     @staticmethod
-    def deserialize_tournament_info(serialized_tournament):
+    def deserialize_round_info(serialized_round):
+        round = Round(match_list=serialized_round['match_list'], start_time=serialized_round['start_time'],
+                      end_time=serialized_round['end_time'])
+        return round
+
+    def deserialize_tournament_info(self, serialized_tournament):
+        round_list = []
+        for r in serialized_tournament['round_list']:
+            deserialized_round = self.deserialize_round_info(r)
+            round_list.append(deserialized_round)
         tournament = Tournament(name=serialized_tournament['name'], location=serialized_tournament['location'],
                                 description=serialized_tournament['description'],
                                 nb_of_round=serialized_tournament['nb_of_round'],
                                 time_set=serialized_tournament['time_set'],
                                 tournament_players_id=serialized_tournament['tournament_players_id'],
                                 tournament_id=serialized_tournament['tournament_id'],
-                                actual_round=serialized_tournament['actual_round'],
+                                round_id=serialized_tournament['round_id'],
                                 begin_date=serialized_tournament['begin_date'],
                                 end_date=serialized_tournament['end_date'],
-                                round_list=serialized_tournament['round_list'])
+                                round_list=round_list)
         return tournament
+
+    # def update_player_rank(self, player_id, new_rank):
+    #     player = self.players_table.search(self.query.id == player_id)[0]
+    #     player = self.deserialize_player_info(player)
+    #     play

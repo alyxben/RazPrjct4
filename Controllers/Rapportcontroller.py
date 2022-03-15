@@ -1,9 +1,8 @@
+import Controllers
 from Models.Menumodel import MenuModel
 from Views.Menuview import HomeMenuView
 from Models.database import Database
 from Views.Rapportview import RapportView
-from Models.Playermodel import Player
-from Models.Tournamentmodel import Tournament
 
 
 class RapportSubMenu:
@@ -14,33 +13,48 @@ class RapportSubMenu:
         self.rapport_view = RapportView()
 
     def __call__(self):
-        self.menu.add('auto', 'Liste des joueurs', PlayerRapport())
-        self.menu.add('auto', 'Liste des tournois clôturés', TournamentRapport())
-        #self.menu.add('auto', "Liste des joueurs d'un tournoi", ) display closed tournament, let user select wich tournament
-        #self.menu.add('auto', "Liste des tours d'un tournoi") display closed tournament, let user select wich tournament
-        #self.menu.add('auto', "Liste des matchs d'un tournoi") display closed tournament, let user select wich tournament
+        """
+        Rapport option submenu
+        :return:
+        """
+        self.menu.add_option('auto', 'Liste des joueurs', PlayerRapport())
+        self.menu.add_option('auto', 'Liste des tournois clôturés', TournamentRapport())
+        self.menu.add_option('0', 'Retour au menu principal', Controllers.HomeMenuController())
         user_choice = self.menu_view.get_user_choice()
         return user_choice.handler
 
 
 class PlayerRapport:
+    """Player rapport handler"""
+
     def __init__(self):
         self.database = Database()
         self.view = RapportView()
         self.players = []
 
     def __call__(self):
-        self.players = self.database.load_all_players()
-        self.view.display_players_list(self.players)
+        """
+        Player rapport submenu
+        :return: Rapport sub menu when user wants
+        """
+        user_choice = self.view.display_players_list(self.database.load_all_players())
+        if user_choice == '0':
+            return RapportSubMenu()
 
 
 class TournamentRapport:
+    """Tournament rapport handler"""
+
     def __init__(self):
         self.database = Database()
         self.view = RapportView()
         self.tournaments = self.database.load_closed_tournaments()
 
     def __call__(self):
+        """
+        Tournament rapport submenu, controlls the display of tournament info with user input
+        :return: Rapport sub menu when user wants
+        """
         user_choices = self.view.get_user_tournament_choice_from_list(self.tournaments)
         if user_choices[1] == 'J':
             self.get_tournament_players(user_choices[0])
@@ -48,18 +62,40 @@ class TournamentRapport:
             self.get_tournament_rounds(user_choices[0])
         elif user_choices[1] == 'M':
             self.get_tournament_matchs(user_choices[0])
+        elif user_choices[1] == '0':
+            return RapportSubMenu()
 
     def get_tournament_players(self, tournament):
+        """
+        Loads tournament players list and load it to the view
+        :param tournament: Tournament object
+        """
         players_id = tournament.tournament_players_id
         players_list = []
-        for id in players_id:
-            players_list.append(self.database.load_player_from_id(id))
+        for p_id in players_id:
+            players_list.append(self.database.load_player_from_id(p_id))
         self.view.display_players_list(players_list)
 
     def get_tournament_rounds(self, tournament):
-        self.view.display_round_list(tournament.round_list)
+        """
+        Load tournament round list and load it to the view
+        :param tournament: Tournament object
+        :return:
+        """
+        round_list = []
+        for r in tournament.round_list:
+            r = self.database.deserialize_round_info(r)
+            print(r.match_list[0])
+            round_list.append(r)
+
+        self.view.display_round_list(round_list)
 
     def get_tournament_matchs(self, tournament):
+        """
+        Load all the matchs and load them to the view
+        :param tournament:
+        :return:
+        """
         match_list = []
         for r in tournament.round_list:
             matchs = r['match_list']

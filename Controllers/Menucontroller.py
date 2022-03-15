@@ -26,15 +26,12 @@ class HomeMenuController:
         self.view = HomeMenuView(self.menu)
 
     def __call__(self):
-        self.menu.add('auto', 'Créer un nouveau tournoi', CreateNewTournamentController)
-        self.menu.add('auto', 'Continuer un tournoi', LiveTournamentController())
-        self.menu.add('auto', 'Rapport', RapportSubMenu())
-        #self.menu.add('auto', 'Générer un rapport de joueur', ManagePlayers())
-        #self.menu.add('auto', 'Gérer les joueurs', ManagePlayers())
-        #self.menu.add('q', 'Quitter', QuittAppController())
-
+        """
+        Home menu options
+        :return: selected controller
+        """
+        self.menu.add_option('auto', 'Continuer un tournoi', LiveTournamentController())
+        self.menu.add_option('auto', 'Créer un nouveau tournoi', CreateNewTournamentController)
+        self.menu.add_option('auto', 'Rapport', RapportSubMenu())
         user_choice = self.view.get_user_choice()
-
         return user_choice.handler
-
-

@@ -1,12 +1,10 @@
-from datetime import datetime
 from .Roundmodel import *
-from .Playermodel import *
 from operator import attrgetter
 
 
 class Tournament:
     def __init__(self, name, location, description, nb_of_round, time_set, tournament_players_id, tournament_id,
-                 actual_round, begin_date, end_date=False, round_list=[]):
+                 round_id, begin_date, round_list=[], end_date=False):
         self.name: str = name
         self.location: str = location
         self.description: str = description
@@ -17,8 +15,8 @@ class Tournament:
         self.time_set: str = time_set
         self.tournament_players_id: list = tournament_players_id
         self.tournament_id: str = tournament_id
-        self.actual_round: int = int(actual_round)
-        self.round_list = round_list
+        self.round_id: int = int(round_id)
+        self.round_list: list = round_list
         self.begin_date: str = begin_date
         self.end_date: str = end_date
 
@@ -27,7 +25,7 @@ class Tournament:
             return f"Nom du tournoi: {self.name}\n" \
                    f"Lieu du tournoi: {self.location}\n" \
                    f"Date de début du tournoi: {self.begin_date}\n" \
-                   f"Classement: {self.tournament_players_id}\n" \
+                   f"Le tournoi a été joué en {self.nb_of_rounds} round\n" \
                    f"Date de fin du tournoi: {self.end_date}"
         else:
             return f"Nom du tournoi: {self.name}\n" \
@@ -36,42 +34,28 @@ class Tournament:
                    f"Nombre de Round: {self.nb_of_rounds}\n" \
                    f"Nombre de participant: {len(self.tournament_players_id)}\n" \
                    f"Type de contrôle du temps: {self.time_set}\n" \
-                   f"Round actuel: {self.actual_round}\n"
+                   f"Round actuel: {self.round_id}\n"
 
     def serialize_tournament_info(self):
-        """
-        Serialize the tournament info, so it can be stored in db
-        :return: Serialized info
-        """
         return {'name': self.name,
                 'location': self.location,
                 'description': self.description,
                 'tournament_players_id': self.tournament_players_id,
                 'begin_date': self.begin_date,
                 'nb_of_round': self.nb_of_rounds,
-                'actual_round': self.actual_round,
+                'round_id': self.round_id,
                 'round_list': self.round_list,
                 'time_set': self.time_set,
                 'tournament_id': self.tournament_id,
                 'end_date': self.end_date}
 
-    def serialize_tournament_rounds(self):
-        tournament_rounds_serialized = []
-        if isinstance(round, Round):
-            for round in self.round_list:
-                if isinstance(round, Round):
-                    tournament_rounds_serialized.append(round.serialize_round_info())
-                else:
-                    tournament_rounds_serialized = self.round_list
-            return tournament_rounds_serialized
-
     def generate_1st_round_pairs(self, tournament_players):
         """
-        Generates the 1st round pairs
+        Generates the 1st round pairs, according to the swiss pairing system
         :return: list of pairs for the 1st round
         """
+        self.begin_date = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         round_start_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-        self.actual_round += 1
         tournament_players = sorted(tournament_players, key=attrgetter('elo'))
         i = 0
         middle = len(tournament_players) // 2
@@ -85,8 +69,9 @@ class Tournament:
 
     def generate_next_round_pairs(self, tournament_players):
         """
-        Associez le joueur 1 avec le joueur 2, le joueur 3 avec le joueur 4, et ainsi de suite.
-        Si le joueur 1 a déjà joué contre le joueur 2, associez-le plutôt au joueur 3.
+        Sort tournament players list by points and pairs them according to Swiss pairing system
+        :param tournament_players: tournament players list
+        :return: Tuple containing match for the round, round start time
         """
         tournament_players.sort(key=attrgetter('tournament_points'), reverse=True)
         groups = tournament_players[::2], tournament_players[1::2]
@@ -94,7 +79,6 @@ class Tournament:
         availables = sorted(tournament_players, key=attrgetter('tournament_points'), reverse=True)
         match_list = []
         round_start_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-        self.actual_round += 1
         for item in range(len(matchs)):
             (player_1, player_2) = matchs[item]
             availables.remove(player_1)
