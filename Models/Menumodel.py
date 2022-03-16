@@ -10,7 +10,7 @@ class MenuEntry:
         return str(self.option)
 
 
-class MenuModel():
+class MenuModel:
     def __init__(self):
         self._entries = {}
         self._autokey = 1
@@ -22,7 +22,7 @@ class MenuModel():
         :param option: option displayed to the user, loaded to MenuEntry
         :param handler: controller corresponding to the user's choice, loaded to MenuEntry
         """
-        if key == 'auto':
+        if key == "auto":
             key = str(self._autokey)
             self._autokey += 1
 

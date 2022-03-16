@@ -1,11 +1,14 @@
 from Views.Menuview import HomeMenuView
 from Models.Menumodel import MenuModel
-from Controllers.Tournamentcontroller import LiveTournamentController, CreateNewTournamentController
+from Controllers.Tournamentcontroller import (
+    LiveTournamentController,
+    CreateNewTournamentController,
+)
 from Controllers.Rapportcontroller import RapportSubMenu
 
 
 class AppController:
-    """ Front Controller """
+    """Front Controller"""
 
     def __init__(self):
         self.controller = None
@@ -30,8 +33,10 @@ class HomeMenuController:
         Home menu options
         :return: selected controller
         """
-        self.menu.add_option('auto', 'Continuer un tournoi', LiveTournamentController())
-        self.menu.add_option('auto', 'Créer un nouveau tournoi', CreateNewTournamentController)
-        self.menu.add_option('auto', 'Rapport', RapportSubMenu())
+        self.menu.add_option("auto", "Continuer un tournoi", LiveTournamentController())
+        self.menu.add_option(
+            "auto", "Créer un nouveau tournoi", CreateNewTournamentController
+        )
+        self.menu.add_option("auto", "Rapport", RapportSubMenu())
         user_choice = self.view.get_user_choice()
         return user_choice.handler

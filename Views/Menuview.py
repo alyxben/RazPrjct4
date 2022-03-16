@@ -1,5 +1,4 @@
 class HomeMenuView:
-
     def __init__(self, menu):
         """
         :param menu: MenuModel
@@ -21,7 +20,7 @@ class HomeMenuView:
         """
         while True:
             self._display_menu()
-            user_selection = input('>> ')
+            user_selection = input(">> ")
             if user_selection in self.menu:
                 return self.menu[user_selection]
             else:

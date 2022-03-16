@@ -1,4 +1,3 @@
-import Controllers
 from uuid import uuid4
 from typing import Dict
 from operator import attrgetter
@@ -16,37 +15,42 @@ class TournamentView:
         """
 
         tournament_info: Dict[str, str] = {
-            'name': input("Veuillez entrer le nom du tournoi: ").strip().capitalize(),
-            'location': input("Veuillez entrer le lieu du tournoi: ").strip().capitalize(),
-            'description': input(
-                "Veuillez entrer une description pour ce tournoi: ").strip().capitalize()}
+            "name": input("Veuillez entrer le nom du tournoi: ").strip().capitalize(),
+            "location": input("Veuillez entrer le lieu du tournoi: ").strip().capitalize(),
+            "description": input("Veuillez entrer une description pour ce tournoi: ").strip().capitalize()}
         while True:
-            tournament_info['time_set'] = input(
-                "Veuillez entrer le type de controle du temps"" voulu pour ce tournoi"
-                " (Bullet, Blitz ou Coup rapide)").strip().capitalize()
-            if tournament_info['time_set'] not in ('Bullet', 'Blitz', 'Coup rapide'):
+            tournament_info["time_set"] = (
+                input(
+                    "Veuillez entrer le type de controle du temps"
+                    " voulu pour ce tournoi"
+                    " (Bullet, Blitz ou Coup rapide)"
+                ).strip().capitalize()
+            )
+            if tournament_info["time_set"] not in ("Bullet", "Blitz", "Coup rapide"):
                 print("Veuillez choisir entre Bullet, Blitz ou coup rapide")
             else:
                 break
         while True:
-            tournament_info['nb_of_round'] = input(
-                "Veuillez entrer le nombre de round souhaité (valeur par defaut 4):").strip()
-            if tournament_info['nb_of_round'] == "":
+            tournament_info["nb_of_round"] = input(
+                "Veuillez entrer le nombre de round souhaité (valeur par defaut 4):"
+            ).strip()
+            if tournament_info["nb_of_round"] == "":
                 break
-            elif tournament_info['nb_of_round'].isdigit() is False:
-                print('Veuillez entrer un nombre ')
-            elif int(tournament_info['nb_of_round']) < 1:
+            elif tournament_info["nb_of_round"].isdigit() is False:
+                print("Veuillez entrer un nombre ")
+            elif int(tournament_info["nb_of_round"]) < 1:
                 print(
                     f"Veuillez entrer un nombre entier positif :{tournament_info['nb_of_round']}"
-                    f" n'est pas un chiffre entier positif")
+                    f" n'est pas un chiffre entier positif"
+                )
             else:
                 break
-        tournament_info['tournament_players_id'] = []
-        tournament_info['tournament_id'] = str(uuid4())
-        tournament_info['round_id'] = 0
-        tournament_info['round_list'] = []
-        tournament_info['begin_date'] = ""
-        tournament_info['end_date'] = False
+        tournament_info["tournament_players_id"] = []
+        tournament_info["tournament_id"] = str(uuid4())
+        tournament_info["round_id"] = 0
+        tournament_info["round_list"] = []
+        tournament_info["begin_date"] = ""
+        tournament_info["end_date"] = False
         return tournament_info
 
     @staticmethod
@@ -56,9 +60,13 @@ class TournamentView:
         :param tournament: Tournament object
         :return: True if yes and False if no
         """
-        possible_answers = ['Oui', 'Non']
+        possible_answers = ["Oui", "Non"]
         while True:
-            user_input = input(f"Commencer ou reprendre le tournoi {tournament.name} (Oui ou Non)").strip().capitalize()
+            user_input = (
+                input(
+                    f"Commencer ou reprendre le tournoi {tournament.name} (Oui ou Non)"
+                ).strip().capitalize()
+            )
             if user_input not in possible_answers:
                 print("Je n'ai pas compris votre réponse, veuillez choisir oui ou non")
             else:
@@ -82,15 +90,19 @@ class TournamentView:
             print(i)
             live_tournament_names.append(i.name)
         while True:
-            user_input = input(f"Veuillez entrer le nom du tournoi que vous souhaitez continuer, 0 pour revenir au "
-                               f"menu principal: \n").strip()
+            user_input = input(
+                "Veuillez entrer le nom du tournoi que vous souhaitez continuer, 0 pour revenir au "
+                "menu principal: \n"
+            ).strip()
             if user_input == "0":
                 return user_input
             elif user_input not in live_tournament_names:
                 print(f"{user_input} n'est pas dans la liste des tournois en cours")
 
             else:
-                return next(i.tournament_id for i in tournaments_list if i.name == user_input)
+                return next(
+                    i.tournament_id for i in tournaments_list if i.name == user_input
+                )
 
     @staticmethod
     def get_match_result(match):
@@ -99,21 +111,29 @@ class TournamentView:
         :param match: tuple containing match as ([p1], [p2])
         :return: ([p1, score_p1],[p2, score_p2])
         """
-        possible_input = ['0', '0.5', '1']
+        possible_input = ["0", "0.5", "1"]
         p1 = match[0][0]
         p2 = match[1][0]
-        print(p1.last_name, 'VS', p2.last_name)
+        print(p1.last_name, "VS", p2.last_name)
         while True:
             try:
-                score_p1 = input(f"Veuillez entrer le résultat du joueur {p1.last_name}").strip()
-                score_p2 = input(f"Veuillez entrer le résultat du joueur {p2.last_name}").strip()
+                score_p1 = input(
+                    f"Veuillez entrer le résultat du joueur {p1.last_name}"
+                ).strip()
+                score_p2 = input(
+                    f"Veuillez entrer le résultat du joueur {p2.last_name}"
+                ).strip()
                 if score_p1 not in possible_input:
-                    print("Je n'ai pas compris votre réponse, 1 pour une victoire, 0 pour une défaite"
-                          " et 0.5 pour une partie nulle")
+                    print(
+                        "Je n'ai pas compris votre réponse, 1 pour une victoire, 0 pour une défaite"
+                        " et 0.5 pour une partie nulle"
+                    )
                     continue
                 elif score_p2 not in possible_input:
-                    print("Je n'ai pas compris votre réponse, 1 pour une victoire, 0 pour une défaite"
-                          " et 0.5 pour une partie nulle")
+                    print(
+                        "Je n'ai pas compris votre réponse, 1 pour une victoire, 0 pour une défaite"
+                        " et 0.5 pour une partie nulle"
+                    )
                     continue
                 elif float(score_p1) + float(score_p2) != 1:
                     print("Score non réglementaire, une partie vaut 1 point")
@@ -129,20 +149,42 @@ class TournamentView:
 
     @staticmethod
     def display_tournament_info(tournament, round):
+        """Displays tournament round info
+        :return user input"""
         match_display_list = []
         for match in round.match_list:
             p1_name = match[0][0].last_name
             p2_name = match[1][0].last_name
             match_display_list.append(f"{p1_name} VS {p2_name}")
-        print(f"Round: {tournament.round_id + 1}\n"
-              f"Le round a commencé le {round.start_time}\n"
-              f"Liste des match pour ce round: ")
+        print(
+            f"Round: {tournament.round_id + 1}\n"
+            f"Le round a commencé le {round.start_time}\n"
+            f"Liste des match pour ce round: "
+        )
         for m in match_display_list:
             print(m)
         while True:
-            user_input = input(f"Appuyer sur Enter pour mettre fin au round {tournament.round_id} "
-                               f"et entrer les résultats, 0 pour revenir au menu principal: ")
-            if user_input not in ['', '0']:
+            user_input = input(
+                f"Appuyer sur Enter pour mettre fin au round {tournament.round_id + 1} "
+                f"et entrer les résultats, 0 pour revenir au menu principal: "
+            )
+            if user_input not in ["", "0"]:
                 print("je n'ai pas compris votre réponse")
             else:
                 return user_input
+
+    @staticmethod
+    def display_end_tournament(tournament, players_ranking):
+        """Displays finished tournament info"""
+        players_ranking.sort(key=attrgetter("tournament_points"), reverse=True)
+        print(tournament)
+        print(
+            f"Le gagnant de ce tournoi est {players_ranking[0].last_name}, {players_ranking[0].first_name}"
+        )
+        while True:
+            user_input = input("Appuyer sur Enter pour revenir au menu principal: ")
+            if user_input != "":
+                print("Je n'ai pas compris votre demande")
+                continue
+            else:
+                break

@@ -12,21 +12,31 @@ class RapportView:
         :param players_list: List of players displayed
         :return: user choice when he wants out
         """
-        possible_answers = ['A', 'C', '0']
+        possible_answers = ["A", "C", "0"]
         while True:
             try:
-                user_choice = input("Afficher la liste des joueurs par ordre alphabetique (a),\n"
-                                    "Afficher la liste des joueurs par classement (c),"
-                                    " 0 pour revenir au menu précédent").capitalize()
+                user_choice = input(
+                    "Afficher la liste des joueurs par ordre alphabetique (a),\n"
+                    "Afficher la liste des joueurs par classement (c),"
+                    " 0 pour revenir au menu précédent"
+                ).capitalize()
                 if user_choice not in possible_answers:
-                    print("Je n'ai pas compris votre réponse, veuillez choisir 'a' pour une liste par ordre\n"
-                          " alphabetique ou 'c' pour un classement ou bien  0 pour revenir au menu précédent")
+                    print(
+                        "Je n'ai pas compris votre réponse, veuillez choisir 'a' pour une liste par ordre\n"
+                        " alphabetique ou 'c' pour un classement ou bien  0 pour revenir au menu précédent"
+                    )
                     continue
                 elif user_choice == possible_answers[0]:
-                    print(sorted(players_list, key=attrgetter('last_name')))
+                    print(sorted(players_list, key=attrgetter("last_name")))
                     continue
                 elif user_choice == possible_answers[1]:
-                    print(sorted(players_list, key=attrgetter('tournament_points'), reverse=True))
+                    print(
+                        sorted(
+                            players_list,
+                            key=attrgetter("tournament_points"),
+                            reverse=True,
+                        )
+                    )
                     continue
                 elif user_choice == possible_answers[2]:
                     return user_choice
@@ -42,25 +52,33 @@ class RapportView:
         :return: Tournament object and user input
         """
         tournaments_name = []
-        possible_choices = ['J', 'R', 'M']
+        possible_choices = ["J", "R", "M", "0"]
         print("Liste des tournois clôturés: ")
+        print()
         for i in tournaments_list:
             print(i)
+            print()
             tournaments_name.append(i.name)
         while True:
-            user_input = input(f"Veuillez entrer le nom du tournoi dont vous souhaitez afficher les "
-                               f"informations").strip().capitalize()
+            user_input = input(
+                "Veuillez entrer le nom du tournoi dont vous souhaitez afficher les "
+                "informations"
+            ).strip()
             if user_input == "0":
                 return user_input
             elif user_input not in tournaments_name:
                 print(f"{user_input} n'est pas dans la liste des tournois clôturés")
             else:
                 tournament = next(i for i in tournaments_list if i.name == user_input)
-            second_input = input(f"'J' pour afficher les Joueurs de ce tournoi\n"
-                                 f"'R' pour afficher les Rounds de ce tournoi\n"
-                                 f"'M' pour afficher les Matchs de ce tournoi\n").capitalize()
+            second_input = input(
+                "'J' pour afficher les Joueurs de ce tournoi\n"
+                "'R' pour afficher les Rounds de ce tournoi\n"
+                "'M' pour afficher les Matchs de ce tournoi\n"
+            ).capitalize()
             if second_input not in possible_choices:
-                print("Je n'ai pas compris votre demande, 'J' pour Joueurs, 'R' pour Round et 'M' pour Match")
+                print(
+                    "Je n'ai pas compris votre demande, 'J' pour Joueurs, 'R' pour Round et 'M' pour Match"
+                )
             else:
                 return tournament, second_input
 
