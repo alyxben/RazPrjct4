@@ -85,23 +85,24 @@ class TournamentView:
         :return: Tournament object
         """
         live_tournament_names = []
-        print("Liste des tournois en cours: ")
+        print("Liste des tournois: ")
         for i in tournaments_list:
             print(i)
+            print()
             live_tournament_names.append(i.name)
         while True:
             user_input = input(
-                "Veuillez entrer le nom du tournoi que vous souhaitez continuer, 0 pour revenir au "
-                "menu principal: \n"
+                "Veuillez entrer le nom du tournoi, 0 pour revenir au "
+                "menu précédent: \n"
             ).strip()
             if user_input == "0":
                 return user_input
             elif user_input not in live_tournament_names:
-                print(f"{user_input} n'est pas dans la liste des tournois en cours")
+                print(f"{user_input} n'est pas dans la liste des tournois")
 
             else:
                 return next(
-                    i.tournament_id for i in tournaments_list if i.name == user_input
+                    i for i in tournaments_list if i.name == user_input
                 )
 
     @staticmethod
@@ -148,7 +149,7 @@ class TournamentView:
         return match
 
     @staticmethod
-    def display_tournament_info(tournament, round):
+    def display_tournament_info(tournament, round, players):
         """Displays tournament round info
         :return user input"""
         match_display_list = []
@@ -159,8 +160,13 @@ class TournamentView:
         print(
             f"Round: {tournament.round_id + 1}\n"
             f"Le round a commencé le {round.start_time}\n"
-            f"Liste des match pour ce round: "
+            f"Classement:"
         )
+        print("{:16.16} | {:4.4} | {}".format('Nom du joueur', 'elo', 'points'))
+        for p in players:
+            player_row = "{0:<16.16} | {1: <4.4} | {2}".format(p.last_name, str(p.elo), p.tournament_points)
+            print(player_row)
+        print('Liste des matchs: ')
         for m in match_display_list:
             print(m)
         while True:
@@ -176,10 +182,9 @@ class TournamentView:
     @staticmethod
     def display_end_tournament(tournament, players_ranking):
         """Displays finished tournament info"""
-        players_ranking.sort(key=attrgetter("tournament_points"), reverse=True)
         print(tournament)
         print(
-            f"Le gagnant de ce tournoi est {players_ranking[0].last_name}, {players_ranking[0].first_name}"
+            f"Le classement de ce tournoi est {players_ranking[0].last_name}, {players_ranking[0].first_name}"
         )
         while True:
             user_input = input("Appuyer sur Enter pour revenir au menu principal: ")

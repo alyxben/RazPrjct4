@@ -6,6 +6,7 @@ from Views.Tournamentview import TournamentView
 from Models.Roundmodel import Round
 from Models.Playermodel import Player
 from Models.Tournamentmodel import Tournament
+from operator import attrgetter
 
 
 class LiveTournamentController:
@@ -30,7 +31,7 @@ class LiveTournamentController:
             list_of_ongoing_tournaments = self.database.load_ongoing_tournaments()
             self.tournament_id = self.select_tournament_from_list(
                 list_of_ongoing_tournaments
-            )
+            ).tournament_id
             if self.tournament_id == "0":
                 return Controllers.Menucontroller.HomeMenuController()
         return self.play_tournament(self.tournament_id)
@@ -60,6 +61,8 @@ class LiveTournamentController:
             self.tournament, self.players = self.play_round()
             if self.tournament and self.players == "0":
                 return LiveTournamentController()
+        sorter = lambda player: (player.tournament_points + player.elo)
+        self.players.sort(key=sorter, reverse=True)
         self.tournament.end_date = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.tournament_view.display_end_tournament(self.tournament, self.players)
 
@@ -75,12 +78,14 @@ class LiveTournamentController:
         """
         if self.tournament.round_id == 0:
             round_info = self.tournament.generate_1st_round_pairs(self.players)
+            self.players.sort(key=attrgetter('elo'), reverse=True)
         else:
             round_info = self.tournament.generate_next_round_pairs(self.players)
+            self.players.sort(key=attrgetter('tournament_points'), reverse=True)
         match_list, round_start_time = round_info
         self.round = Round(match_list, round_start_time)
         user_input = self.tournament_view.display_tournament_info(
-            self.tournament, self.round
+            self.tournament, self.round, self.players
         )
         if user_input == "0":
             return "0", "0"

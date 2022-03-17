@@ -39,48 +39,26 @@ class RapportView:
                     )
                     continue
                 elif user_choice == possible_answers[2]:
-                    return user_choice
+                    return
             except ValueError:
                 print(f"Les choix possibles sont {possible_answers}")
                 continue
 
     @staticmethod
-    def get_user_tournament_choice_from_list(tournaments_list):
-        """
-        Displays tournaments list, get's user input
-        :param tournaments_list: Closed tournament list
-        :return: Tournament object and user input
-        """
-        tournaments_name = []
+    def get_user_display_choice(tournament):
         possible_choices = ["J", "R", "M", "0"]
-        print("Liste des tournois clôturés: ")
-        print()
-        for i in tournaments_list:
-            print(i)
-            print()
-            tournaments_name.append(i.name)
         while True:
-            user_input = input(
-                "Veuillez entrer le nom du tournoi dont vous souhaitez afficher les "
-                "informations"
-            ).strip()
-            if user_input == "0":
-                return user_input
-            elif user_input not in tournaments_name:
-                print(f"{user_input} n'est pas dans la liste des tournois clôturés")
-            else:
-                tournament = next(i for i in tournaments_list if i.name == user_input)
-            second_input = input(
-                "'J' pour afficher les Joueurs de ce tournoi\n"
-                "'R' pour afficher les Rounds de ce tournoi\n"
-                "'M' pour afficher les Matchs de ce tournoi\n"
-            ).capitalize()
-            if second_input not in possible_choices:
+            user_input = input(f"J pour afficher les joueurs du tournoi {tournament.name}\n"
+                               f"R pour afficher les rounds du tournoi {tournament.name}\n"
+                               f"M pour afficher les mathc du tournoi {tournament.name}\n"
+                               f"0 pour revenir au menu précédent\n").capitalize()
+            if user_input not in possible_choices:
                 print(
                     "Je n'ai pas compris votre demande, 'J' pour Joueurs, 'R' pour Round et 'M' pour Match"
                 )
+                continue
             else:
-                return tournament, second_input
+                return user_input
 
     @staticmethod
     def display_round_list(round_list):
@@ -92,6 +70,7 @@ class RapportView:
         for r in round_list:
             print(f"Round: {n}", r)
             n += 1
+        input("Appuyer sur n'importe quel touche pour retourner au menu précédent")
 
     @staticmethod
     def display_matchs(match_list):
@@ -102,4 +81,5 @@ class RapportView:
         """
         for m in match_list:
             print(m)
-        print(len(match_list))
+        print(f"Nombre de match :{len(match_list)}")
+        input("Appuyer sur n'importe quel touche pour retourner au menu précédent")

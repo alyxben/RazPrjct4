@@ -3,6 +3,7 @@ from Models.Menumodel import MenuModel
 from Views.Menuview import HomeMenuView
 from Models.database import Database
 from Views.Rapportview import RapportView
+from Views.Tournamentview import TournamentView
 
 
 class RapportSubMenu:
@@ -53,21 +54,25 @@ class TournamentRapport:
         self.database = Database()
         self.view = RapportView()
         self.tournaments = self.database.load_closed_tournaments()
+        self.tournament_view = TournamentView()
 
     def __call__(self):
         """
         Tournament rapport submenu, controlls the display of tournament info with user input
         :return: Rapport sub menu when user wants
         """
-        user_choices = self.view.get_user_tournament_choice_from_list(self.tournaments)
-        if user_choices[1] == "J":
-            self.get_tournament_players(user_choices[0])
-        elif user_choices[1] == "R":
-            self.get_tournament_rounds(user_choices[0])
-        elif user_choices[1] == "M":
-            self.get_tournament_matchs(user_choices[0])
-        elif user_choices[1] == "0":
-            return RapportSubMenu()
+        tournament = self.tournament_view.get_user_tournament_choice_from_list(self.tournaments)
+        while True:
+            user_input = self.view.get_user_display_choice(tournament)
+            if user_input == "J":
+                self.get_tournament_players(tournament)
+            elif user_input == "R":
+                self.get_tournament_rounds(tournament)
+            elif user_input == "M":
+                self.get_tournament_matchs(tournament)
+            elif user_input == '0':
+                break
+        return RapportSubMenu()
 
     def get_tournament_players(self, tournament):
         """
@@ -78,9 +83,7 @@ class TournamentRapport:
         players_list = []
         for p_id in players_id:
             players_list.append(self.database.load_player_from_id(p_id))
-        user_choice = self.view.display_players_list(players_list)
-        if user_choice == "0":
-            return RapportSubMenu()
+        self.view.display_players_list(players_list)
 
     def get_tournament_rounds(self, tournament):
         """
