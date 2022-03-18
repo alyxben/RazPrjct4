@@ -1,6 +1,5 @@
 from uuid import uuid4
 from typing import Dict
-from operator import attrgetter
 
 
 class TournamentView:
@@ -16,15 +15,22 @@ class TournamentView:
 
         tournament_info: Dict[str, str] = {
             "name": input("Veuillez entrer le nom du tournoi: ").strip().capitalize(),
-            "location": input("Veuillez entrer le lieu du tournoi: ").strip().capitalize(),
-            "description": input("Veuillez entrer une description pour ce tournoi: ").strip().capitalize()}
+            "location": input("Veuillez entrer le lieu du tournoi: ")
+                .strip()
+                .capitalize(),
+            "description": input("Veuillez entrer une description pour ce tournoi: ")
+                .strip()
+                .capitalize(),
+        }
         while True:
             tournament_info["time_set"] = (
                 input(
                     "Veuillez entrer le type de controle du temps"
                     " voulu pour ce tournoi"
                     " (Bullet, Blitz ou Coup rapide)"
-                ).strip().capitalize()
+                )
+                    .strip()
+                    .capitalize()
             )
             if tournament_info["time_set"] not in ("Bullet", "Blitz", "Coup rapide"):
                 print("Veuillez choisir entre Bullet, Blitz ou coup rapide")
@@ -65,7 +71,9 @@ class TournamentView:
             user_input = (
                 input(
                     f"Commencer ou reprendre le tournoi {tournament.name} (Oui ou Non)"
-                ).strip().capitalize()
+                )
+                    .strip()
+                    .capitalize()
             )
             if user_input not in possible_answers:
                 print("Je n'ai pas compris votre réponse, veuillez choisir oui ou non")
@@ -101,9 +109,7 @@ class TournamentView:
                 print(f"{user_input} n'est pas dans la liste des tournois")
 
             else:
-                return next(
-                    i for i in tournaments_list if i.name == user_input
-                )
+                return next(i for i in tournaments_list if i.name == user_input)
 
     @staticmethod
     def get_match_result(match):
@@ -162,11 +168,13 @@ class TournamentView:
             f"Le round a commencé le {round.start_time}\n"
             f"Classement:"
         )
-        print("{:16.16} | {:4.4} | {}".format('Nom du joueur', 'elo', 'points'))
+        print("{:16.16} | {:4.4} | {}".format("Nom du joueur", "elo", "points"))
         for p in players:
-            player_row = "{0:<16.16} | {1: <4.4} | {2}".format(p.last_name, str(p.elo), p.tournament_points)
+            player_row = "{0:<16.16} | {1: <4.4} | {2}".format(
+                p.last_name, str(p.elo), p.tournament_points
+            )
             print(player_row)
-        print('Liste des matchs: ')
+        print("Liste des matchs: ")
         for m in match_display_list:
             print(m)
         while True:
@@ -184,8 +192,14 @@ class TournamentView:
         """Displays finished tournament info"""
         print(tournament)
         print(
-            f"Le classement de ce tournoi est {players_ranking[0].last_name}, {players_ranking[0].first_name}"
+            "Classement: "
         )
+        print("{:16.16} | {:4.4} | {}".format("Nom du joueur", "elo", "points"))
+        for p in players_ranking:
+            player_row = "{0:<16.16} | {1: <4.4} | {2}".format(
+                p.last_name, str(p.elo), p.tournament_points
+            )
+            print(player_row)
         while True:
             user_input = input("Appuyer sur Enter pour revenir au menu principal: ")
             if user_input != "":

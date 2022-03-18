@@ -38,6 +38,6 @@ class HomeMenuController:
             "auto", "Créer un nouveau tournoi", CreateNewTournamentController
         )
         self.menu.add_option("auto", "Rapport", RapportSubMenu())
-        self.menu.add_option('0', 'Quitter', False)
+        self.menu.add_option("0", "Quitter", False)
         user_choice = self.view.get_user_choice()
         return user_choice.handler

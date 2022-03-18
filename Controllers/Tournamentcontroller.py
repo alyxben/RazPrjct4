@@ -31,7 +31,7 @@ class LiveTournamentController:
             list_of_ongoing_tournaments = self.database.load_ongoing_tournaments()
             self.tournament_id = self.select_tournament_from_list(
                 list_of_ongoing_tournaments
-            ).tournament_id
+            )
             if self.tournament_id == "0":
                 return Controllers.Menucontroller.HomeMenuController()
         return self.play_tournament(self.tournament_id)
@@ -47,8 +47,9 @@ class LiveTournamentController:
         )
         if user_choice == "0":
             return user_choice
-        self.tournament = self.database.load_tournament_from_id(user_choice)
-        return user_choice
+        print(user_choice)
+        self.tournament = self.database.load_tournament_from_id(user_choice.tournament_id)
+        return user_choice.tournament_id
 
     def play_tournament(self, tournament_id):
         """
@@ -61,8 +62,7 @@ class LiveTournamentController:
             self.tournament, self.players = self.play_round()
             if self.tournament and self.players == "0":
                 return LiveTournamentController()
-        sorter = lambda player: (player.tournament_points + player.elo)
-        self.players.sort(key=sorter, reverse=True)
+        self.players.sort(key=attrgetter('tournament_points'), reverse=True)
         self.tournament.end_date = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         self.tournament_view.display_end_tournament(self.tournament, self.players)
 
@@ -78,10 +78,10 @@ class LiveTournamentController:
         """
         if self.tournament.round_id == 0:
             round_info = self.tournament.generate_1st_round_pairs(self.players)
-            self.players.sort(key=attrgetter('elo'), reverse=True)
+            self.players.sort(key=attrgetter("elo"), reverse=True)
         else:
             round_info = self.tournament.generate_next_round_pairs(self.players)
-            self.players.sort(key=attrgetter('tournament_points'), reverse=True)
+            self.players.sort(key=attrgetter("tournament_points"), reverse=True)
         match_list, round_start_time = round_info
         self.round = Round(match_list, round_start_time)
         user_input = self.tournament_view.display_tournament_info(
@@ -133,7 +133,6 @@ class CreateNewTournamentController:
         self.database = Database()
 
     def __call__(self):
-        """Do function to make it CLEAAAAANEEEEERRR"""
         tournament_info = self.tournament_view.get_tournament_info()
         self.new_players = self.get_players()
         self.new_tournament = self.get_tournament_obj(tournament_info, self.new_players)
@@ -148,6 +147,7 @@ class CreateNewTournamentController:
             return Controllers.Menucontroller.HomeMenuController()
 
     def get_players(self):
+        """loads players info from view, returns players objects"""
         players = self.player_view.get_player_info()
         for p in players:
             p = Player(
@@ -166,6 +166,12 @@ class CreateNewTournamentController:
         return self.new_players
 
     def get_tournament_obj(self, tournament_info, tournament_players):
+        """
+        Creates tournament object
+        :param tournament_info: dict of tournament info
+        :param tournament_players: list of players object
+        :return: tournament object
+        """
         players_id = [p.p_id for p in tournament_players]
         self.new_tournament = Tournament(
             name=tournament_info["name"],

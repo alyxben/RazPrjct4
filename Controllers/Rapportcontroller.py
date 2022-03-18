@@ -42,9 +42,8 @@ class PlayerRapport:
         Player rapport submenu
         :return: Rapport sub menu when user wants
         """
-        user_choice = self.view.display_players_list(self.database.load_all_players())
-        if user_choice == "0":
-            return RapportSubMenu()
+        self.view.display_players_list(self.database.load_all_players())
+        return RapportSubMenu()
 
 
 class TournamentRapport:
@@ -61,18 +60,23 @@ class TournamentRapport:
         Tournament rapport submenu, controlls the display of tournament info with user input
         :return: Rapport sub menu when user wants
         """
-        tournament = self.tournament_view.get_user_tournament_choice_from_list(self.tournaments)
-        while True:
-            user_input = self.view.get_user_display_choice(tournament)
-            if user_input == "J":
-                self.get_tournament_players(tournament)
-            elif user_input == "R":
-                self.get_tournament_rounds(tournament)
-            elif user_input == "M":
-                self.get_tournament_matchs(tournament)
-            elif user_input == '0':
-                break
-        return RapportSubMenu()
+        tournament = self.tournament_view.get_user_tournament_choice_from_list(
+            self.tournaments
+        )
+        if tournament == '0':
+            return RapportSubMenu()
+        else:
+            while True:
+                user_input = self.view.get_user_display_choice(tournament)
+                if user_input == "J":
+                    self.get_tournament_players(tournament)
+                elif user_input == "R":
+                    self.get_tournament_rounds(tournament)
+                elif user_input == "M":
+                    self.get_tournament_matchs(tournament)
+                elif user_input == "0":
+                    break
+            return RapportSubMenu()
 
     def get_tournament_players(self, tournament):
         """

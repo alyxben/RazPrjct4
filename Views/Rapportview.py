@@ -48,10 +48,12 @@ class RapportView:
     def get_user_display_choice(tournament):
         possible_choices = ["J", "R", "M", "0"]
         while True:
-            user_input = input(f"J pour afficher les joueurs du tournoi {tournament.name}\n"
-                               f"R pour afficher les rounds du tournoi {tournament.name}\n"
-                               f"M pour afficher les mathc du tournoi {tournament.name}\n"
-                               f"0 pour revenir au menu précédent\n").capitalize()
+            user_input = input(
+                "J pour afficher les joueurs du tournoi \n"
+                "R pour afficher les rounds du tournoi \n"
+                "M pour afficher les mathc du tournoi \n"
+                "0 pour revenir au menu précédent\n"
+            ).capitalize()
             if user_input not in possible_choices:
                 print(
                     "Je n'ai pas compris votre demande, 'J' pour Joueurs, 'R' pour Round et 'M' pour Match"
